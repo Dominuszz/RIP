@@ -1,0 +1,34 @@
+<html lang="rus">
+<head>
+    <title>lab1</title>
+    <link rel="stylesheet" href="/static/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/static/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+<form action="/" method="GET" class="search-form">
+    <input type="text" name="query" placeholder="Поиск по степени...." value="{{ .query }}" class="search-input">
+    <button type="submit" class="search-btn">🔎</button>
+</form>
+    <div class="card-container">
+        {{ range .complexityClasses }}
+        <div class="card">
+            <img src="http://localhost:9000/lab1/{{ .IMG }}" alt="img" class="card-image">
+            <div class="card-content">
+                <p class="card-text">O({{ .Complexity }})</p>
+                <p class="card-text">Степень: {{ .Degree }}</p>
+                <a href="/order/{{ .ID }}" class="btn-detail">Подробнее</a>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+    <a href="/cart" class="cart-button">
+        <img src="/static/img/cart.png" alt="Корзина">
+        {{ if .cartCount }}
+        <span class="cart-badge">{{ .cartCount }}</span>
+        {{ end }}
+    </a>
+</body>
+</html>

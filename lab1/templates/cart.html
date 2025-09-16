@@ -1,0 +1,35 @@
+<html lang="rus">
+<head>
+    <title>lab1</title>
+    <link rel="stylesheet" href="/static/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/static/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+<div class="request-header">
+    <span class="cart-text">Класс сложности</span>
+    <span class="cart-text">Степень</span>
+    <span class="cart-text">Объем массива</span>
+</div>
+<div class="container">
+    {{ range .service_complexclasses }}
+    <div class="request-row">
+    <span class="complexity-cell">
+        <img src="http://localhost:9000/lab1/{{ .IMG }}" alt="img" class="cell-img">
+        <span class="cart-text">O({{ .Complexity }})</span>
+    </span>
+        <span class="cart-text">{{ .Degree }}</span>
+        <span>
+        <input type="text" class="input-field" name="arraySize_{{ .Complexity }}" placeholder="10">
+    </span>
+    </div>
+    {{ end }}
+</div>
+
+<div class ="result">
+    <div>Итоговое время: 11 мкс</div>
+    <div>Итоговая сложность: O(n)</div>
+</div>
+</body>
+</html>
