@@ -64,21 +64,21 @@ header {
     width: 24%;
     height: 360px;
     overflow: hidden;
-    display: flex;              /* включаем flex для карточки */
-    flex-direction: column;     /* содержимое сверху вниз */
-    justify-content: space-between; /* текст сверху, кнопка снизу */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .card-content {
-    flex: 1;                    /* растягиваем на всю оставшуюся высоту */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* равномерное распределение */
+    justify-content: space-between;
     padding: 10px;
 }
 
 .card-text {
-    margin: 8px 0;              /* одинаковые отступы между строками */
+    margin: 8px 0;
     font-size: 20px;
     text-align: center;
 }
@@ -95,12 +95,12 @@ header {
     font-size: 16px;
 }
 
-.cart-button{
+.bigo-request-button{
     text-decoration: none;
     margin: 1rem;
 }
 
-.cart-badge{
+.bigo-request-badge{
     color: #148761;
     background-color: #222222;
     border-radius: 50%;
@@ -171,18 +171,18 @@ header {
     padding: 20px;
 }
 
-.request-header,
-.request-row {
+.bigo-request-header,
+.bigo-request-row {
     margin-bottom: 20px;
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr; /* одинаковая сетка у шапки и строк */
+    grid-template-columns: 2fr 1fr 2fr;
     align-items: center;
     padding: 12px;
     gap: 10px;
 }
 
 
-.request-header {
+.bigo-request-header {
     font-weight: bold;
     background-color: #222;
     border: 1px solid #fff;
@@ -190,7 +190,7 @@ header {
 }
 
 
-.request-row {
+.bigo-request-row {
     height: 20%;
     background-color: #1a1a1a;
     border-bottom: 1px solid #333;
@@ -229,7 +229,7 @@ header {
     color: #000000;
     opacity: 1;
 }
-.cart-text{
+.bigo-request-text{
     font-size: 20px;
 }
 .result{
@@ -238,4 +238,6 @@ header {
     display: flex;
     flex-direction: column;
     font-size: 40px;
+    position: relative;
+    padding-bottom: 40px; /* Add space for the button */
 }

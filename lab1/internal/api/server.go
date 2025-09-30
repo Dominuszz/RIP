@@ -27,8 +27,8 @@ func StartServer() {
 	// справа путь к папке, в которой лежит статика
 
 	r.GET("/", handler.GetComplexClasses)
-	r.GET("/order/:id", handler.GetComplexClass)
-	r.GET("/cart", handler.GetCart)
+	r.GET("/ComplexClass/:id", handler.GetComplexClass)
+	r.GET("/BigORequest", handler.GetBigORequest)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	log.Println("Server down")
 }

@@ -1,0 +1,23 @@
+<html lang="rus">
+<head>
+    <title>lab1</title>
+    <link rel="stylesheet" href="/static/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/static/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+
+        <div class ="detail">
+            <img src="http://localhost:9000/lab1/{{ .complexClass.IMG }}" alt="img" class = "detail-image">
+            <div class="text-panel">
+                <h2 class="complexity-title">Класс Сложности O({{ .complexClass.Complexity }})</h2>
+                <div class="description-container">
+                    <p class="degree">Степень: {{ .complexClass.Degree }}</p>
+                    <p class="description">{{ .complexClass.Description }}</p>
+                </div>
+            </div>
+        </div>
+
+</body>
+</html>

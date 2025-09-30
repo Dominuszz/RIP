@@ -23,7 +23,7 @@ func (h *Handler) GetComplexClasses(ctx *gin.Context) {
 	var complexityClasses []repository.ComplexClass
 	var err error
 
-	searchQuery := ctx.Query("query")
+	searchQuery := ctx.Query("search_degree")
 	if searchQuery == "" {
 		complexityClasses, err = h.Repository.GetComplexClasses()
 		if err != nil {
@@ -35,15 +35,16 @@ func (h *Handler) GetComplexClasses(ctx *gin.Context) {
 			logrus.Error(err)
 		}
 	}
-	cartComplexClasses, err := h.Repository.GetCart()
-	cartCount := 0
+
+	RequestComplexClasses, err := h.Repository.GetBigORequest()
+	RequestCount := 0
 	if err == nil {
-		cartCount = len(cartComplexClasses)
+		RequestCount = len(RequestComplexClasses)
 	}
-	ctx.HTML(http.StatusOK, "index.html", gin.H{
+	ctx.HTML(http.StatusOK, "ComplexClasses.html", gin.H{
 		"complexityClasses": complexityClasses,
-		"query":             searchQuery,
-		"cartCount":         cartCount,
+		"search_degree":     searchQuery,
+		"BigORequestCount":  RequestCount,
 	})
 }
 func (h *Handler) GetComplexClass(ctx *gin.Context) {
@@ -59,21 +60,24 @@ func (h *Handler) GetComplexClass(ctx *gin.Context) {
 		logrus.Error(err)
 	}
 
-	ctx.HTML(http.StatusOK, "order.html", gin.H{
+	ctx.HTML(http.StatusOK, "ComplexClass.html", gin.H{
 		"complexClass": complexClass,
 	})
 }
 
-func (h *Handler) GetCart(ctx *gin.Context) {
+func (h *Handler) GetBigORequest(ctx *gin.Context) {
 	var complexityClasses []repository.ComplexClass
 	var err error
 
-	complexityClasses, err = h.Repository.GetCart()
+	complexityClasses, err = h.Repository.GetBigORequest()
 	if err != nil {
 		logrus.Error(err)
 	}
-
-	ctx.HTML(http.StatusOK, "cart.html", gin.H{
+	resultTime := "13 мкс"
+	resultComplexity := "O(n)"
+	ctx.HTML(http.StatusOK, "BigORequest.html", gin.H{
 		"service_complexclasses": complexityClasses,
+		"ResultTime":             resultTime,
+		"ResultComplexity":       resultComplexity,
 	})
 }

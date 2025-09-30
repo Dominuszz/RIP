@@ -1,0 +1,37 @@
+<html lang="rus">
+<head>
+    <title>lab1</title>
+    <link rel="stylesheet" href="/static/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/static/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+<div class="bigo-request-header">
+    <span class="bigo-request-text">Класс сложности</span>
+    <span class="bigo-request-text">Степень</span>
+    <span class="bigo-request-text">Объем массива</span>
+</div>
+<div class="container">
+    {{ range .service_complexclasses }}
+    <div class="bigo-request-row">
+    <span class="complexity-cell">
+        <img src="http://localhost:9000/lab1/{{ .IMG }}" alt="img" class="cell-img">
+        <span class="bigo-request-text">O({{ .Complexity }})</span>
+    </span>
+        <span class="bigo-request-text">{{ .Degree }}</span>
+        <span>
+        <input type="text" class="input-field" name="arraySize_{{ .Complexity }}" placeholder="10">
+    </span>
+
+    </div>
+    {{ end }}
+</div>
+
+<div class ="result">
+    <div>Итоговое время: {{ .ResultTime }}</div>
+    <div>Итоговая сложность: {{ .ResultComplexity }}</div>
+</div>
+
+</body>
+</html>

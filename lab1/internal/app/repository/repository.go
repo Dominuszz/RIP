@@ -107,7 +107,7 @@ func (r *Repository) GetComplexClassByDegree(title string) ([]ComplexClass, erro
 
 	return result, nil
 }
-func (r *Repository) GetCart() ([]ComplexClass, error) {
+func (r *Repository) GetBigORequest() ([]ComplexClass, error) {
 	complexityClasses, err := r.GetComplexClasses()
 	if err != nil {
 		return []ComplexClass{}, err
