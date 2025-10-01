@@ -1,0 +1,276 @@
+body {
+    background-color: #11181C;
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header-logo {
+    height: 64px;
+    width: 64px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 30%;
+    min-width: 12rem;
+    margin: 1rem;
+}
+
+.search-btn {
+    background: #148761;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    width: 10%;
+    cursor: pointer;
+}
+
+header {
+    background-color: #222222;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #FFFFFF;
+}
+
+.search-input {
+    font-size: 20px;
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    width: 80%;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card-image {
+    width: 100%;
+    height: 60%;
+    object-fit: initial;
+}
+
+.card {
+    background-color: #222222;
+    border-radius: 5%;
+    width: 24%;
+    height: 360px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.card-text {
+    margin: 8px 0;
+    font-size: 20px;
+    text-align: center;
+}
+
+.btn-detail {
+    background-color: #148761;
+    color: #FFFFFF;
+    border: none;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    width: 80px;
+    font-size: 16px;
+}
+
+.bigo-request-button {
+    text-decoration: none;
+    margin: 1rem;
+}
+
+.bigo-request-badge {
+    color: #148761;
+    background-color: #222222;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.detail {
+    margin: 50px auto 0 auto;
+    width: 70%;
+    max-width: 1000px;
+    height: 30%;
+    background-color: #222222;
+    padding: 40px 20px;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.detail-image {
+    width: 60%;
+    height: 350px;
+    object-fit: initial;
+}
+
+.text-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.complexity-title {
+    padding: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #FFFFFF;
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
+.description-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.degree {
+    padding: 20px 0 20px 0;
+    font-size: 20px;
+    color: #FFFFFF;
+    margin: 0 0 8px 0;
+    font-weight: bold;
+}
+
+.description {
+    padding: 20px;
+    font-size: 20px;
+    color: #CCCCCC;
+    margin: 0;
+    line-height: 1.4;
+    padding: 0;
+}
+
+.container {
+    padding: 20px;
+}
+
+.bigo-request-header,
+.bigo-request-row {
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+}
+
+.bigo-request-header {
+    font-weight: bold;
+    background-color: #222;
+    border: 1px solid #fff;
+    text-align: center;
+}
+
+.bigo-request-row {
+    height: 20%;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.complexity-cell {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+}
+
+.cell-img {
+    margin-right: 2rem;
+    margin-left: 1rem;
+    width: 40%;
+    height: 40%;
+    object-fit: initial;
+}
+
+.input-field {
+    font-size: 20px;
+    width: 60%;
+    height: 15%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+}
+
+.input-field::placeholder {
+    color: #000000;
+    opacity: 1;
+}
+
+.bigo-request-text {
+    font-size: 20px;
+}
+
+.result {
+    margin-left: 20px;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 40px;
+    padding-bottom: 40px;
+}
+
+.btn-add {
+    text-align: center;
+    background-color: #148761;
+    color: #FFFFFF;
+    border: none;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    width: 80px;
+    font-size: 16px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+.delete-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #ff0000;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}

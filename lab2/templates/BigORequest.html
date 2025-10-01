@@ -1,0 +1,38 @@
+<html lang="rus">
+<head>
+    <title>lab2</title>
+    <link rel="stylesheet" href="/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+<div class="bigo-request-header">
+    <span class="bigo-request-text">Класс сложности</span>
+    <span class="bigo-request-text">Степень</span>
+    <span class="bigo-request-text">Объем массива</span>
+</div>
+<div class="container">
+    {{ range .BigORequest }}
+    <div class="bigo-request-row">
+    <span class="complexity-cell">
+        <img src="http://localhost:9000/lab1/{{ .ComplexClass.IMG }}" alt="img" class="cell-img">
+        <span class="bigo-request-text">O({{ .ComplexClass.Complexity }})</span>
+    </span>
+        <span class="bigo-request-text">{{ .ComplexClass.Degree }}</span>
+        <span>
+        <input type="text" class="input-field" name="arraySize_{{ .Complexity }}" placeholder="Введите число....">
+    </span>
+    </div>
+    {{ end }}
+</div>
+
+<div class ="result">
+    <form method="POST" action="/BigORequest/delete">
+        <input type="hidden" name="big_o_request_id" value="{{.BigO_Request_ID}}">
+        <button class="delete-button">Удалить заявку</button>
+    </form>
+
+</div>
+</body>
+</html>

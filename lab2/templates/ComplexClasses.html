@@ -1,0 +1,42 @@
+<html lang="rus">
+<head>
+    <title>lab2</title>
+    <link rel="stylesheet" href="/styles/index_style.css">
+</head>
+<body>
+<header>
+    <a href = "/"><img src="/img/logo.png" alt="Logo" class="header-logo"></a>
+</header>
+<form action="/" method="GET" class="search-form">
+    <input type="text" name="search_degree" placeholder="Поиск по степени...." value="{{ .search_degree }}" class="search-input">
+    <button type="submit" class="search-btn">🔎</button>
+</form>
+    <div class="card-container">
+        {{ range .ComplexClasses }}
+        <div class="card">
+            <img src="http://localhost:9000/lab1/{{ .IMG }}" alt="img" class="card-image">
+            <div class="card-content">
+                <p class="card-text">O({{ .Complexity }})</p>
+                <p class="card-text">Степень: {{ .Degree }}</p>
+                <div>
+                    <a href="/ComplexClass/{{ .ID }}" class="btn-detail">Подробнее</a>
+                    <form method = "POST" action="/BigORequest/add">
+                        <input type = "hidden" name = "complexclass_id" value="{{.ID}}">
+                        <button class = "btn-add">Добавить</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+<a href="/BigORequest/{{.BigORequestId}}" class="bigo-request-button">
+        <img src="/img/cart.png" alt="Корзина">
+        {{ if .BigORequestCount }}
+        <span class="bigo-request-badge">{{ .BigORequestCount }}</span>
+        {{ end }}
+    </a>
+</body>
+</html>
