@@ -54,8 +54,16 @@ func (h *Handler) GetComplexClass(ctx *gin.Context) {
 	}
 
 	ctx.HTML(http.StatusOK, "ComplexClass.html", gin.H{
-		"ComplexClass": ComplexClass,
+		"ComplexClass": gin.H{
+			"ID":          ComplexClass.ID,
+			"Complexity":  ComplexClass.Complexity,
+			"Degree":      ComplexClass.Degree,
+			"DegreeText":  ComplexClass.DegreeText,
+			"Description": ComplexClass.Description,
+			"IMG":         ComplexClass.IMG,
+		},
 	})
+
 }
 func (h *Handler) GetBigORequest(ctx *gin.Context) {
 	idStr := ctx.Param("id")
@@ -65,12 +73,8 @@ func (h *Handler) GetBigORequest(ctx *gin.Context) {
 	}
 
 	isDraft, err := h.Repository.IsDraftBigORequest(id)
-	if err != nil {
-		h.errorHandler(ctx, http.StatusInternalServerError, err)
-		return
-	}
-	if !isDraft {
-		ctx.Redirect(http.StatusSeeOther, ctx.Request.Referer())
+	if !isDraft || err != nil {
+		ctx.Redirect(http.StatusSeeOther, "/")
 		return
 	}
 

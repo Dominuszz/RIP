@@ -274,3 +274,9 @@ header {
     cursor: pointer;
     font-size: 16px;
 }
+.bigo-request-button.inactive {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    cursor: not-allowed; 
+}

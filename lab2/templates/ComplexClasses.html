@@ -17,7 +17,7 @@
             <img src="http://localhost:9000/lab1/{{ .IMG }}" alt="img" class="card-image">
             <div class="card-content">
                 <p class="card-text">O({{ .Complexity }})</p>
-                <p class="card-text">Степень: {{ .Degree }}</p>
+                <p class="card-text">Степень: {{ .DegreeText }}</p>
                 <div>
                     <a href="/ComplexClass/{{ .ID }}" class="btn-detail">Подробнее</a>
                     <form method = "POST" action="/BigORequest/add">
@@ -32,11 +32,11 @@
         {{ end }}
     </div>
 
-<a href="/BigORequest/{{.BigORequestId}}" class="bigo-request-button">
-        <img src="/img/cart.png" alt="Корзина">
-        {{ if .BigORequestCount }}
-        <span class="bigo-request-badge">{{ .BigORequestCount }}</span>
-        {{ end }}
-    </a>
+<a href="/BigORequest/{{.BigORequestId}}" class="bigo-request-button{{ if not .BigORequestCount }} inactive{{ end }}">
+    <img src="/img/cart.png" alt="Корзина">
+    {{ if .BigORequestCount }}
+    <span class="bigo-request-badge">{{ .BigORequestCount }}</span>
+    {{ end }}
+</a>
 </body>
 </html>

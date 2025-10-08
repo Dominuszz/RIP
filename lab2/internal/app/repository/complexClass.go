@@ -35,7 +35,7 @@ func (r *Repository) GetComplexClass(id int) (ds.ComplexClass, error) {
 
 func (r *Repository) GetComplexClasssByDegree(title string) ([]ds.ComplexClass, error) {
 	var ComplexClasses []ds.ComplexClass
-	err := r.db.Where("Degree ILIKE ?", "%"+title+"%").Find(&ComplexClasses).Error
+	err := r.db.Where("degree_text ILIKE ?", "%"+title+"%").Find(&ComplexClasses).Error
 	if err != nil {
 		return nil, err
 	}
