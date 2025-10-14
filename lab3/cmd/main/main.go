@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"lab2/internal/app/config"
-	"lab2/internal/app/dsn"
-	"lab2/internal/app/handler"
-	"lab2/internal/app/repository"
-	"lab2/internal/pkg"
+	"lab3/internal/app/config"
+	"lab3/internal/app/dsn"
+	"lab3/internal/app/handler"
+	"lab3/internal/app/repository"
+	"lab3/internal/pkg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func main() {
 	postgresString := dsn.FromEnv()
 	fmt.Println(postgresString)
 
-	rep, errRep := repository.New(postgresString)
+	rep, errRep := repository.NewRepository(postgresString)
 	if errRep != nil {
 		logrus.Fatalf("error initializing repository: %v", errRep)
 	}

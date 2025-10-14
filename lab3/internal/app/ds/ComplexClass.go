@@ -1,7 +1,7 @@
 package ds
 
 type ComplexClass struct {
-	ID          uint    `gorm:"primaryKey"`
+	ID          uint    `gorm:"primaryKey;autoIncrement"`
 	IMG         string  `gorm:"type:varchar(100)"`
 	Complexity  string  `gorm:"type:varchar(100);not null"`
 	Degree      float64 `gorm:"not null"`

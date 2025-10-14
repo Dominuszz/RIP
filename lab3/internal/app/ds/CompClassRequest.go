@@ -1,7 +1,7 @@
 package ds
 
 type CompClassRequest struct {
-	ID             uint    `gorm:"primaryKey"`
+	ID             uint    `gorm:"primary_key;autoIncrement"`
 	BigORequestID  uint    `gorm:"not null;uniqueIndex:idx_compclass_request"`
 	ComplexClassID uint    `gorm:"not null;uniqueIndex:idx_compclass_request"`
 	Complexity     string  `gorm:"type:varchar(100);not null"`

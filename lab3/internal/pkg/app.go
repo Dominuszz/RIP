@@ -3,8 +3,8 @@ package pkg
 import (
 	"fmt"
 
-	"lab2/internal/app/config"
-	"lab2/internal/app/handler"
+	"lab3/internal/app/config"
+	"lab3/internal/app/handler"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
