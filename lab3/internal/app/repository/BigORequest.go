@@ -233,6 +233,8 @@ func (r *Repository) FinishBigORequest(id int, status string) (ds.BigORequest, e
 	}
 	if status == "выполнен" {
 		var res = 0.0
+		var maxComplexity = "O(1)"
+		var maxtime = 0.0
 		compclassrequest, err := r.GetComplexClassesBigORequests(int(bigorequest.ID))
 		if err != nil {
 			return ds.BigORequest{}, err
@@ -243,8 +245,13 @@ func (r *Repository) FinishBigORequest(id int, status string) (ds.BigORequest, e
 				return ds.BigORequest{}, err
 			}
 			res += compclass_time
+			if maxtime < compclass_time {
+				maxtime = compclass_time
+				maxComplexity = "O(" + compclassrequest.Complexity + ")"
+			}
 		}
 		bigorequest.CalculatedTime = res
+		bigorequest.CalculatedComplexity = maxComplexity
 	}
 
 	return bigorequest, nil
