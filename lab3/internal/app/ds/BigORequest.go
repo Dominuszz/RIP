@@ -13,7 +13,7 @@ type BigORequest struct {
 	DateFinish           sql.NullTime `gorm:"default:null"`
 	CreatorID            uint         `gorm:"not null"`
 	ModeratorID          uint         `gorm:"default:null"`
-	CalculatedTime       float64      `gorm:"type:numeric(3,1)"`
+	CalculatedTime       float64      `gorm:"type:numeric(30,10)"`
 	CalculatedComplexity string       `gorm:"type:varchar(255)"`
 	Creator              Users        `gorm:"foreignKey:CreatorID"`
 	Moderator            Users        `gorm:"foreignKey:ModeratorID"`

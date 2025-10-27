@@ -136,9 +136,6 @@ func (r *Repository) AddToBigORequest(bigo_request_id int, complexclass_id int) 
 	return r.db.Create(&ds.CompClassRequest{
 		ComplexClassID: uint(complexclass_id),
 		BigORequestID:  uint(bigo_request_id),
-		Complexity:     complexClass.Complexity,
-		Degree:         complexClass.Degree,
-		DegreeText:     complexClass.DegreeText,
 	}).Error
 }
 

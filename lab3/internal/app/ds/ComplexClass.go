@@ -9,3 +9,4 @@ type ComplexClass struct {
 	Description string  `gorm:"type:varchar(255); not null"`
 	IsDelete    bool    `gorm:"type:boolean not null;default:false"`
 }
+ 

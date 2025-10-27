@@ -240,18 +240,24 @@ func (r *Repository) FinishBigORequest(id int, status string) (ds.BigORequest, e
 			return ds.BigORequest{}, err
 		}
 		for _, compclassrequest := range compclassrequest {
-			compclass_time, err := CalculateComplexClassTime(compclassrequest.Degree, compclassrequest.ArraySize)
+			compclass, err := r.GetComplexClass(int(compclassrequest.ComplexClassID))
+			compclass_time, err := CalculateComplexClassTime(compclass.Degree, compclassrequest.ArraySize)
 			if err != nil {
 				return ds.BigORequest{}, err
 			}
 			res += compclass_time
 			if maxtime < compclass_time {
 				maxtime = compclass_time
-				maxComplexity = "O(" + compclassrequest.Complexity + ")"
+				maxComplexity = "O(" + compclass.Complexity + ")"
 			}
 		}
+
 		bigorequest.CalculatedTime = res
 		bigorequest.CalculatedComplexity = maxComplexity
+		err = r.db.Model(&bigorequest).Updates(ds.BigORequest{
+			CalculatedTime:       bigorequest.CalculatedTime,
+			CalculatedComplexity: bigorequest.CalculatedComplexity,
+		}).Error
 	}
 
 	return bigorequest, nil
