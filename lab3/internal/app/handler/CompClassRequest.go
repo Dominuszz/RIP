@@ -10,6 +10,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// DeleteCompClassFromBigORequest godoc
+// @Summary Удалить класс сложности из заявки
+// @Description Удаляет связь класса сложности и заявки
+// @Tags CompClassRequest
+// @Produce json
+// @Param compclass_id path int true "ID класса сложности"
+// @Param bigo_request_id path int true "ID заявки"
+// @Success 200 {object} serializer.BigORequestJSON "Обновленная заявка"
+// @Failure 400 {object} map[string]string "Неверные ID"
+// @Failure 403 {object} map[string]string "Доступ запрещен"
+// @Failure 404 {object} map[string]string "Не найдено"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Security ApiKeyAuth
+// @Router /compclassrequest/{compclass_id}/{bigo_request_id} [delete]
 func (h *Handler) DeleteCompClassFromBigORequest(ctx *gin.Context) {
 	bigorequest_id, err := strconv.Atoi(ctx.Param("bigo_request_id"))
 	if err != nil {
@@ -44,6 +58,21 @@ func (h *Handler) DeleteCompClassFromBigORequest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, serializer.BigORequestToJSON(bigorequest, creatorLogin, moderatorLogin))
 }
 
+// EditCompClassFromBigORequest godoc
+// @Summary Изменить данные класса сложности в заявке
+// @Description Обновляет параметры класса сложности в конкретной заявке
+// @Tags CompClassRequest
+// @Accept json
+// @Produce json
+// @Param compclass_id path int true "ID класса сложности"
+// @Param bigo_request_id path int true "ID заявки"
+// @Param data body serializer.CompClassRequestJSON true "Новые данные"
+// @Success 200 {object} serializer.CompClassRequestJSON "Обновленные данные"
+// @Failure 400 {object} map[string]string "Неверные данные"
+// @Failure 404 {object} map[string]string "Не найдено"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Security ApiKeyAuth
+// @Router /compclassrequest/{compclass_id}/{bigo_request_id} [put]
 func (h *Handler) EditCompClassFromBigORequest(ctx *gin.Context) {
 	bigorequest_id, err := strconv.Atoi(ctx.Param("bigo_request_id"))
 	if err != nil {

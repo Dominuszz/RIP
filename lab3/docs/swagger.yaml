@@ -1,0 +1,980 @@
+basePath: /api/v1
+definitions:
+  serializer.BigORequestJSON:
+    properties:
+      bigo_request_id:
+        type: integer
+      calculated_complexity:
+        type: string
+      calculated_time:
+        type: number
+      creator_login:
+        type: string
+      date_create:
+        type: string
+      date_finish:
+        type: string
+      date_update:
+        type: string
+      moderator_login:
+        type: string
+      status:
+        type: string
+    type: object
+  serializer.CompClassRequestJSON:
+    properties:
+      array_size:
+        type: integer
+      big_o_request_id:
+        type: integer
+      comp_class_request_id:
+        type: integer
+      complexclass_id:
+        type: integer
+    type: object
+  serializer.ComplexClassJSON:
+    properties:
+      compclass_id:
+        type: integer
+      complexity:
+        type: string
+      degree:
+        type: number
+      degree_text:
+        type: string
+      description:
+        type: string
+      is_delete:
+        type: boolean
+    type: object
+  serializer.StatusJSON:
+    properties:
+      status:
+        type: string
+    type: object
+  serializer.UserJSON:
+    properties:
+      id:
+        type: string
+      is_moderator:
+        type: boolean
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@bigorequest.com
+    name: API Support
+    url: http://localhost:8080
+  description: API для управления расчётами времени и сложности Классов сложности
+  license:
+    name: MIT
+  title: Big O Request API
+  version: "1.0"
+paths:
+  /bigorequest/{id}:
+    get:
+      description: Возвращает полную информацию о заявке
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные заявки с классами сложности
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Заявка не найдено
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получить заявку по ID
+      tags:
+      - bigorequests
+  /bigorequest/{id}/delete-bigorequest:
+    delete:
+      description: Выполняет логическое удаление заявки
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Статус удаления
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Заявка не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить заявку
+      tags:
+      - bigorequests
+  /bigorequest/{id}/edit-bigorequest:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные заявки
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные заявки
+        in: body
+        name: bigorequest
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.BigORequestJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная заявка
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "400":
+          description: Неверные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Заявка не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменить заявку
+      tags:
+      - bigorequests
+  /bigorequest/{id}/finish-bigorequest:
+    put:
+      consumes:
+      - application/json
+      description: Изменяет статус заявки (только для модераторов)
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новый статус
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.StatusJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Результат модерации
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Заявка не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Завершить заявку
+      tags:
+      - bigorequests
+  /bigorequest/{id}/form-bigorequest:
+    put:
+      description: Переводит заявку в статус "formed"
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сформированная заявка
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Заявка не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Сформировать заявку
+      tags:
+      - bigorequests
+  /bigorequest/all-bigo_requests:
+    get:
+      description: Возвращает заявки с возможностью фильтрации по датам и статусу
+      parameters:
+      - description: Начальная дата (YYYY-MM-DD)
+        in: query
+        name: from-date
+        type: string
+      - description: Конечная дата (YYYY-MM-DD)
+        in: query
+        name: to-date
+        type: string
+      - description: Статус заявки
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список заявок
+          schema:
+            items:
+              $ref: '#/definitions/serializer.BigORequestJSON'
+            type: array
+        "400":
+          description: Неверный формат даты
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получить список заявок на расчёт
+      tags:
+      - bigorequests
+  /bigorequest/bigorequest-cart:
+    get:
+      description: Возвращает информацию о текущей заявке-черновике на расчёт пользователя
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные корзины заявки-черновика
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получить корзину расчёта
+      tags:
+      - bigorequests
+  /compclassrequest/{compclass_id}/{bigo_request_id}:
+    delete:
+      description: Удаляет связь класса сложности и заявки
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: compclass_id
+        required: true
+        type: integer
+      - description: ID заявки
+        in: path
+        name: bigo_request_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная заявка
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "400":
+          description: Неверные ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Не найдено
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить класс сложности из заявки
+      tags:
+      - CompClassRequest
+    put:
+      consumes:
+      - application/json
+      description: Обновляет параметры класса сложности в конкретной заявке
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: compclass_id
+        required: true
+        type: integer
+      - description: ID заявки
+        in: path
+        name: bigo_request_id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.CompClassRequestJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленные данные
+          schema:
+            $ref: '#/definitions/serializer.CompClassRequestJSON'
+        "400":
+          description: Неверные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Не найдено
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменить данные класса сложности в заявке
+      tags:
+      - CompClassRequest
+  /complexclass:
+    get:
+      description: Возвращает все классы сложности или фильтрует по степени
+      parameters:
+      - description: Степень класса сложности для поиска
+        in: query
+        name: search-degree
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список классов сложности
+          schema:
+            items:
+              $ref: '#/definitions/serializer.ComplexClassJSON'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить список классов сложности
+      tags:
+      - CompClasses
+  /complexclass/{id}:
+    get:
+      description: Возвращает информацию о классе сложности по его идентификатору
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные класса сложности
+          schema:
+            $ref: '#/definitions/serializer.ComplexClassJSON'
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Устройство не найдено
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить класс сложности по ID
+      tags:
+      - CompClasses
+  /complexclass/{id}/add-photo:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Загружает изображение для класса сложности и возвращает обновленные
+        данные
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Изображение класса сложности
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Статус загрузки и данные класса сложности
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или файл
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Класс сложности не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Загрузить изображение устройства
+      tags:
+      - CompClasses
+  /complexclass/{id}/add-to-bigorequest:
+    post:
+      description: Добавляет класс сложности в заявку-черновик пользователя
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Расчёт с добавленным классом сложности
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "201":
+          description: Создан новый расчёт
+          schema:
+            $ref: '#/definitions/serializer.BigORequestJSON'
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Класс сложности не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Класс сложности уже в расчёте
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Добавить класс сложности в расчёт
+      tags:
+      - CompClasses
+  /complexclass/{id}/delete-compclass:
+    delete:
+      description: Выполняет логическое удаление класса сложности по ID
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Статус удаления
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Класс сложности не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить класс сложности
+      tags:
+      - CompClasses
+  /complexclass/{id}/edit-compclass:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о классе сложности по ID
+      parameters:
+      - description: ID класса сложности
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные класса сложности
+        in: body
+        name: compclass
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.ComplexClassJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленный класс сложности
+          schema:
+            $ref: '#/definitions/serializer.ComplexClassJSON'
+        "400":
+          description: Неверные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Класс сложности не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменить данные класса сложности
+      tags:
+      - CompClasses
+  /complexclass/create-compclass:
+    post:
+      consumes:
+      - application/json
+      description: Создает новый класс сложности и возвращает его данные
+      parameters:
+      - description: Данные нового класса сложности
+        in: body
+        name: device
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.ComplexClassJSON'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданный класс сложности
+          schema:
+            $ref: '#/definitions/serializer.ComplexClassJSON'
+        "400":
+          description: Неверные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Создать новый класс сложности
+      tags:
+      - CompClasses
+  /users/{login}/info:
+    get:
+      description: Возвращает данные профиля (доступен только тот, чей UUID совпадает
+        с user_id в токене).
+      parameters:
+      - description: Логин пользователя
+        in: path
+        name: login
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Профиль пользователя
+          schema:
+            $ref: '#/definitions/serializer.UserJSON'
+        "400":
+          description: Проблема с авторизацией/получением user_id"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Пользователи не совпадают
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получить профиль пользователя
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Обновляет профиль пользователя (может делать только сам пользователь).
+      parameters:
+      - description: Логин пользователя
+        in: path
+        name: login
+        required: true
+        type: string
+      - description: Новые данные профиля
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.UserJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновлённый профиль
+          schema:
+            $ref: '#/definitions/serializer.UserJSON'
+        "400":
+          description: Ошибка запроса или авторизации
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Доступ запрещён
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменить профиль пользователя
+      tags:
+      - users
+  /users/signin:
+    post:
+      consumes:
+      - application/json
+      description: Принимает логин/пароль, возвращает jwt-токен в формате {"token":"..."}.
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.UserJSON'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Вход (получение токена)
+      tags:
+      - users
+  /users/signout:
+    post:
+      description: Удаляет токен текущего пользователя из хранилища. Возвращает {"status":"signed_out"}.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Проблема с получением user_id
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка при удалении токена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Выход (удаление токена)
+      tags:
+      - users
+  /users/signup:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя. Возвращает URL созданного ресурса
+        в Location и тело созданного пользователя.
+      parameters:
+      - description: Параметры нового пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.UserJSON'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь создан
+          schema:
+            $ref: '#/definitions/serializer.UserJSON'
+        "400":
+          description: Ошибка валидации или входных данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Регистрация пользователя
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

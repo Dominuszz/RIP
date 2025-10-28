@@ -67,7 +67,7 @@ func (r *Repository) EditComplexClass(id int, complexClassJSON serializer.Comple
 	err := r.db.Where("id = ? and is_delete = ?", id, false).First(&complexClass).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ds.ComplexClass{}, fmt.Errorf("%w: устройство с id %d", ErrNotFound, id)
+			return ds.ComplexClass{}, fmt.Errorf("%w: класс сложности с id %d", ErrNotFound, id)
 		}
 		return ds.ComplexClass{}, err
 	}
@@ -149,7 +149,7 @@ func (r *Repository) GetModeratorAndCreatorLogin(bigo_request ds.BigORequest) (s
 	}
 
 	var moderatorLogin string
-	if bigo_request.ModeratorID != 0 {
+	if bigo_request.ModeratorID.Valid {
 		err = r.db.Where("id = ?", bigo_request.ModeratorID).First(&moderator).Error
 		if err != nil {
 			return "", "", err

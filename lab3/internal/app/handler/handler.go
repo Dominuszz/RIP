@@ -3,9 +3,12 @@ package handler
 import (
 	"errors"
 	"lab3/internal/app/repository"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -18,31 +21,60 @@ func NewHandler(r *repository.Repository) *Handler {
 	}
 }
 
+// RegisterHandler godoc
+// @title Big O Request API
+// @version 1.0
+// @description API для управления расчётами времени и сложности Классов сложности
+// @contact.name API Support
+// @contact.url http://localhost:8080
+// @contact.email support@bigorequest.com
+// @license.name MIT
+// @host localhost:8080
+// @BasePath /api/v1
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func (h *Handler) RegisterHandler(router *gin.Engine) {
-	router.GET("/api/complexclass", h.GetComplexClasses)
-	router.GET("/api/complexclass/:id", h.GetComplexClass)
-	router.POST("/api/complexclass/create-compclass", h.CreateComplexClass)
-	router.PUT("/api/complexclass/:id/edit-compclass", h.EditComplexClass)
-	router.DELETE("/api/complexclass/:id/delete-compclass", h.DeleteComplexClass)
-	router.POST("/api/complexclass/:id/add-to-bigorequest", h.AddToBigORequest)
-	router.POST("/api/complexclass/:id/add-photo", h.AddPhoto)
+	api := router.Group("/api/v1")
 
-	router.GET("/api/bigorequest/bigorequest-cart", h.GetBigORequestCart)
-	router.GET("/api/bigorequest/all-bigo_requests", h.GetAllBigORequests)
-	router.GET("/api/bigorequest/:id", h.GetBigORequest)
-	router.PUT("/api/bigorequest/:id/edit-bigorequest", h.EditBigORequest)
-	router.PUT("/api/bigorequest/:id/form-bigorequest", h.FormBigORequest)
-	router.PUT("/api/bigorequest/:id/finish-bigorequest", h.FinishBigORequest)
-	router.DELETE("/api/bigorequest/:id/delete-bigorequest", h.DeleteBigORequest)
+	unauthorized := api.Group("/")
+	unauthorized.POST("/users/signup", h.CreateUser)
+	unauthorized.POST("/users/signin", h.SignIn)
+	unauthorized.GET("/complexclass", h.GetComplexClasses)
+	unauthorized.GET("/complexclass/:id", h.GetComplexClass)
 
-	router.DELETE("/api/compclassrequest/:compclass_id/:bigo_request_id", h.DeleteCompClassFromBigORequest)
-	router.PUT("/api/compclassrequest/:compclass_id/:bigo_request_id", h.EditCompClassFromBigORequest)
+	authorized := api.Group("/")
+	authorized.Use(h.ModeratorMiddleware(false))
+	authorized.POST("/complexclass/create-compclass", h.CreateComplexClass)
+	authorized.PUT("/complexclass/:id/edit-compclass", h.EditComplexClass)
+	authorized.DELETE("/complexclass/:id/delete-compclass", h.DeleteComplexClass)
+	authorized.POST("/complexclass/:id/add-to-bigorequest", h.AddToBigORequest)
+	authorized.POST("/complexclass/:id/add-photo", h.AddPhoto)
 
-	router.POST("/api/users/signup", h.CreateUser)
-	router.GET("/api/users/info", h.GetInfo)
-	router.PUT("/api/users/info", h.EditInfo)
-	router.POST("/api/users/signin", h.SignIn)
-	router.POST("/api/users/signout", h.SignOut)
+	authorized.GET("/bigorequest/bigorequest-cart", h.GetBigORequestCart)
+	authorized.GET("/bigorequest/all-bigo_requests", h.GetAllBigORequests)
+	authorized.GET("/bigorequest/:id", h.GetBigORequest)
+	authorized.PUT("/bigorequest/:id/edit-bigorequest", h.EditBigORequest)
+	authorized.PUT("/bigorequest/:id/form-bigorequest", h.FormBigORequest)
+	authorized.PUT("/bigorequest/:id/finish-bigorequest", h.FinishBigORequest)
+	authorized.DELETE("/bigorequest/:id/delete-bigorequest", h.DeleteBigORequest)
+
+	authorized.DELETE("/compclassrequest/:compclass_id/:bigo_request_id", h.DeleteCompClassFromBigORequest)
+	authorized.PUT("/compclassrequest/:compclass_id/:bigo_request_id", h.EditCompClassFromBigORequest)
+
+	authorized.GET("/users/:login/info", h.GetInfo)
+	authorized.PUT("/users/:login/info", h.EditInfo)
+	authorized.POST("/users/signout", h.SignOut)
+
+	moderator := api.Group("/")
+	moderator.Use(h.ModeratorMiddleware(true))
+	authorized.PUT("/bigorequest/:id/form", h.FormBigORequest)
+
+	swaggerURL := ginSwagger.URL("/swagger/doc.json")
+	router.Any("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerURL))
+	router.GET("/swagger", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
 }
 
 func (h *Handler) RegisterStatic(router *gin.Engine) {

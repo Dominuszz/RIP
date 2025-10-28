@@ -9,6 +9,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
@@ -73,7 +74,7 @@ func (r *Repository) GetBigORequestComplexClasses(id int) ([]ds.ComplexClass, ds
 	return compclasses, bigorequest, nil
 }
 
-func (r *Repository) CheckCurrentBigORequestDraft(creator_ID uint) (ds.BigORequest, error) {
+func (r *Repository) CheckCurrentBigORequestDraft(creator_ID uuid.UUID) (ds.BigORequest, error) {
 	var bigorequest ds.BigORequest
 	res := r.db.Where("creator_id = ? AND status = ?", creator_ID, "черновик").Limit(1).Find(&bigorequest)
 	if res.Error != nil {
@@ -84,7 +85,7 @@ func (r *Repository) CheckCurrentBigORequestDraft(creator_ID uint) (ds.BigOReque
 	return bigorequest, nil
 }
 
-func (r *Repository) GetBigORequestDraft(creator_ID uint) (ds.BigORequest, bool, error) {
+func (r *Repository) GetBigORequestDraft(creator_ID uuid.UUID) (ds.BigORequest, bool, error) {
 	bigorequest, err := r.CheckCurrentBigORequestDraft(creator_ID)
 	if errors.Is(err, ErrNoDraft) {
 		bigorequest = ds.BigORequest{
@@ -103,11 +104,7 @@ func (r *Repository) GetBigORequestDraft(creator_ID uint) (ds.BigORequest, bool,
 	return bigorequest, true, nil
 }
 
-func (r *Repository) GetBigORequestCount(creator_ID uint) int64 {
-	if creator_ID == 0 {
-		return 0
-	}
-
+func (r *Repository) GetBigORequestCount(creator_ID uuid.UUID) int64 {
 	var count int64
 	bigorequest, err := r.CheckCurrentBigORequestDraft(creator_ID)
 	if err != nil {
@@ -199,18 +196,9 @@ func CalculateComplexClassTime(degree float64, arraysize uint) (float64, error) 
 	return math.Pow(cast.ToFloat64(arraysize), degree), nil
 }
 
-func (r *Repository) FinishBigORequest(id int, status string) (ds.BigORequest, error) {
+func (r *Repository) FinishBigORequest(id int, status string, currentUserID uuid.UUID) (ds.BigORequest, error) {
 	if status != "выполнен" && status != "отклонен" {
 		return ds.BigORequest{}, errors.New("неверный статус")
-	}
-
-	user, err := r.GetUserByID(r.GetUserID())
-	if err != nil {
-		return ds.BigORequest{}, err
-	}
-
-	if !user.IsModerator {
-		return ds.BigORequest{}, fmt.Errorf("%w: вы не модератор", ErrNotAllowed)
 	}
 
 	bigorequest, err := r.GetSingleBigORequest(id)
@@ -226,7 +214,10 @@ func (r *Repository) FinishBigORequest(id int, status string) (ds.BigORequest, e
 			Time:  time.Now(),
 			Valid: true,
 		},
-		ModeratorID: uint(user.ID),
+		ModeratorID: uuid.NullUUID{
+			UUID:  currentUserID,
+			Valid: true,
+		},
 	}).Error
 	if err != nil {
 		return ds.BigORequest{}, err
