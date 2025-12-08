@@ -43,6 +43,15 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	unauthorized.GET("/complexclass", h.GetComplexClasses)
 	unauthorized.GET("/complexclass/:id", h.GetComplexClass)
 
+	// Группа для асинхронного сервиса (только секретный ключ)
+	asyncService := api.Group("/")
+	asyncService.Use(h.SecretKeyMiddleware()) // Используем middleware для секретного ключа
+	asyncService.PUT("/bigorequest/:id/update-calculation", h.UpdateCalculation)
+
+	optionalauthorized := api.Group("/")
+	optionalauthorized.Use(h.WithOptionalAuthCheck())
+	optionalauthorized.GET("/bigorequest/bigorequest-cart", h.GetBigORequestCart)
+
 	authorized := api.Group("/")
 	authorized.Use(h.ModeratorMiddleware(false))
 	authorized.POST("/complexclass/create-compclass", h.CreateComplexClass)
@@ -51,7 +60,6 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	authorized.POST("/complexclass/:id/add-to-bigorequest", h.AddToBigORequest)
 	authorized.POST("/complexclass/:id/add-photo", h.AddPhoto)
 
-	authorized.GET("/bigorequest/bigorequest-cart", h.GetBigORequestCart)
 	authorized.GET("/bigorequest/all-bigo_requests", h.GetAllBigORequests)
 	authorized.GET("/bigorequest/:id", h.GetBigORequest)
 	authorized.PUT("/bigorequest/:id/edit-bigorequest", h.EditBigORequest)
@@ -65,10 +73,6 @@ func (h *Handler) RegisterHandler(router *gin.Engine) {
 	authorized.GET("/users/:login/info", h.GetInfo)
 	authorized.PUT("/users/:login/info", h.EditInfo)
 	authorized.POST("/users/signout", h.SignOut)
-
-	moderator := api.Group("/")
-	moderator.Use(h.ModeratorMiddleware(true))
-	authorized.PUT("/bigorequest/:id/form", h.FormBigORequest)
 
 	swaggerURL := ginSwagger.URL("/swagger/doc.json")
 	router.Any("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swaggerURL))

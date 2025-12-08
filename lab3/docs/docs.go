@@ -1475,6 +1475,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "img": {
+                    "type": "string"
+                },
                 "is_delete": {
                     "type": "boolean"
                 }

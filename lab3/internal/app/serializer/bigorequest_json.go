@@ -80,3 +80,11 @@ func BigORequestFromJSON(bigorequest BigORequestJSON) ds.BigORequest {
 type StatusJSON struct {
 	Status string `json:"status"`
 }
+type ResultUpdateJSON struct {
+	CalculatedComplexity string  `json:"calculated_complexity"`
+	CalculatedTime       float64 `json:"calculated_time"`
+	AuthKey              string  `json:"auth_key"`
+}
+type AsyncCalculationJSON struct {
+	PK int `json:"pk"`
+}

@@ -64,8 +64,11 @@ func (r *Repository) GetBigORequestComplexClasses(id int) ([]ds.ComplexClass, ds
 	}
 
 	var compclasses []ds.ComplexClass
-	sub := r.db.Table("comp_class_requests").Where("big_o_request_id = ?", bigorequest.ID)
-	err = r.db.Order("id DESC").Where("id IN (?)", sub.Select("id")).Find(&compclasses).Error
+	err = r.db.
+		Joins("JOIN comp_class_requests ON comp_class_requests.complex_class_id = complex_classes.id").
+		Where("comp_class_requests.big_o_request_id = ?", bigorequest.ID).
+		Order("complex_classes.id DESC").
+		Find(&compclasses).Error
 
 	if err != nil {
 		return []ds.ComplexClass{}, ds.BigORequest{}, err
@@ -205,51 +208,36 @@ func (r *Repository) FinishBigORequest(id int, status string, currentUserID uuid
 	if err != nil {
 		return ds.BigORequest{}, err
 	} else if bigorequest.Status != "сформирован" {
-		return ds.BigORequest{}, fmt.Errorf("это исследование не может быть %s", status)
+		return ds.BigORequest{}, fmt.Errorf("эта заявка не может быть %s", status)
 	}
 
-	err = r.db.Model(&bigorequest).Updates(ds.BigORequest{
-		Status: status,
-		DateFinish: sql.NullTime{
-			Time:  time.Now(),
-			Valid: true,
-		},
-		ModeratorID: uuid.NullUUID{
-			UUID:  currentUserID,
-			Valid: true,
-		},
+	// Только меняем статус и модератора, БЕЗ РАСЧЕТА
+	err = r.db.Model(&bigorequest).Updates(map[string]interface{}{
+		"status":       status,
+		"date_finish":  time.Now(),
+		"moderator_id": currentUserID,
+		"date_update":  time.Now(),
 	}).Error
+
 	if err != nil {
 		return ds.BigORequest{}, err
 	}
-	if status == "выполнен" {
-		var res = 0.0
-		var maxComplexity = "O(1)"
-		var maxtime = 0.0
-		compclassrequest, err := r.GetComplexClassesBigORequests(int(bigorequest.ID))
-		if err != nil {
-			return ds.BigORequest{}, err
-		}
-		for _, compclassrequest := range compclassrequest {
-			compclass, err := r.GetComplexClass(int(compclassrequest.ComplexClassID))
-			compclass_time, err := CalculateComplexClassTime(compclass.Degree, compclassrequest.ArraySize)
-			if err != nil {
-				return ds.BigORequest{}, err
-			}
-			res += compclass_time
-			if maxtime < compclass_time {
-				maxtime = compclass_time
-				maxComplexity = "O(" + compclass.Complexity + ")"
-			}
-		}
-
-		bigorequest.CalculatedTime = res
-		bigorequest.CalculatedComplexity = maxComplexity
-		err = r.db.Model(&bigorequest).Updates(ds.BigORequest{
-			CalculatedTime:       bigorequest.CalculatedTime,
-			CalculatedComplexity: bigorequest.CalculatedComplexity,
-		}).Error
-	}
 
 	return bigorequest, nil
+}
+
+// UpdateBigORequestResult обновляет результаты расчета заявки
+func (r *Repository) UpdateBigORequestResult(bigorequest ds.BigORequest) error {
+	updates := map[string]interface{}{
+		"calculated_complexity": bigorequest.CalculatedComplexity,
+		"calculated_time":       bigorequest.CalculatedTime,
+		"date_update":           time.Now(),
+	}
+
+	// Обновляем статус, если он изменился
+	if bigorequest.Status != "" {
+		updates["status"] = bigorequest.Status
+	}
+
+	return r.db.Model(&bigorequest).Updates(updates).Error
 }
