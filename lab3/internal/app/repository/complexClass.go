@@ -13,17 +13,43 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *Repository) GetComplexClasses() ([]ds.ComplexClass, error) {
+func (r *Repository) GetComplexClasses(searchQuery string, page, limit int) ([]ds.ComplexClass, int64, error) {
 	var complexClasses []ds.ComplexClass
-	err := r.db.Order("id").Where("is_delete = false").Find(&complexClasses).Error
-	if err != nil {
-		return nil, err
-	}
-	if len(complexClasses) == 0 {
-		return nil, fmt.Errorf("массив пустой")
+	var total int64
+
+	countQuery := r.db.Model(&ds.ComplexClass{}).Where("is_delete = false")
+
+	if searchQuery != "" {
+		countQuery = countQuery.Where("degree_text ILIKE ?", "%"+searchQuery+"%")
 	}
 
-	return complexClasses, nil
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if total == 0 {
+		return []ds.ComplexClass{}, 0, nil
+	}
+
+	if page < 1 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
+
+	dataQuery := r.db.Model(&ds.ComplexClass{}).Where("is_delete = false")
+
+	if searchQuery != "" {
+		dataQuery = dataQuery.Where("degree_text ILIKE ?", "%"+searchQuery+"%")
+	}
+
+	err := dataQuery.Order("id").Offset(offset).Limit(limit).Find(&complexClasses).Error
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return complexClasses, total, nil
 }
 
 func (r *Repository) GetComplexClass(id int) (*ds.ComplexClass, error) {
@@ -39,12 +65,8 @@ func (r *Repository) GetComplexClass(id int) (*ds.ComplexClass, error) {
 }
 
 func (r *Repository) GetCompClassByDegree(degree_text string) ([]ds.ComplexClass, error) {
-	var complexClasses []ds.ComplexClass
-	err := r.db.Order("id").Where("degree_text ILIKE ? and is_delete = ?", "%"+degree_text+"%", false).Find(&complexClasses).Error
-	if err != nil {
-		return nil, err
-	}
-	return complexClasses, nil
+	items, _, err := r.GetComplexClasses(degree_text, 1, 1000)
+	return items, err
 }
 
 func (r *Repository) CreateComplexClass(complexClassJSON serializer.ComplexClassJSON) (ds.ComplexClass, error) {

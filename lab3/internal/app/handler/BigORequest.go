@@ -383,6 +383,7 @@ func (h *Handler) FinishBigORequest(ctx *gin.Context) {
 
 // startAsyncCalculation запускает асинхронный расчет через Django сервис
 func (h *Handler) startAsyncCalculation(requestID int) {
+
 	logrus.Infof("Запуск асинхронного расчета для заявки %d", requestID)
 
 	// Получение данных заявки для расчета
@@ -454,21 +455,6 @@ func (h *Handler) startAsyncCalculation(requestID int) {
 	logrus.Infof("Асинхронный расчет для заявки %d успешно запущен", requestID)
 }
 
-// UpdateCalculation godoc
-// @Summary Обновить результаты расчета (для асинхронного сервиса)
-// @Description Принимает результаты расчета от асинхронного сервиса
-// @Tags bigorequests
-// @Accept json
-// @Produce json
-// @Param id path int true "ID заявки"
-// @Param secret-key header string true "Секретный ключ для авторизации"
-// @Param result body map[string]interface{} true "Результаты расчета"
-// @Success 200 {object} serializer.BigORequestJSON "Заявка обновлена"
-// @Failure 400 {object} map[string]string "Неверный запрос или ключ"
-// @Failure 403 {object} map[string]string "Доступ запрещен"
-// @Failure 404 {object} map[string]string "Заявка не найдена"
-// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
-// @Router /bigorequest/{id}/update-calculation [put]
 // UpdateCalculation godoc
 // @Summary Обновить результаты расчета (для асинхронного сервиса)
 // @Description Принимает результаты расчета от асинхронного сервиса

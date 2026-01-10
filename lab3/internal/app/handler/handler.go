@@ -35,6 +35,7 @@ func NewHandler(r *repository.Repository) *Handler {
 // @in header
 // @name Authorization
 func (h *Handler) RegisterHandler(router *gin.Engine) {
+	router.Use(CORSMiddleware())
 	api := router.Group("/api/v1")
 
 	unauthorized := api.Group("/")

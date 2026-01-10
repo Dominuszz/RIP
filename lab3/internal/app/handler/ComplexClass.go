@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"lab3/internal/app/ds"
 	"lab3/internal/app/repository"
 	"lab3/internal/app/serializer"
 	"net/http"
@@ -14,36 +13,79 @@ import (
 
 // GetComplexClasses godoc
 // @Summary Получить список классов сложности
-// @Description Возвращает все классы сложности или фильтрует по степени
+// @Description Возвращает все классы сложности или фильтрует по степени с пагинацией
 // @Tags CompClasses
 // @Produce json
 // @Param search-degree query string false "Степень класса сложности для поиска"
-// @Success 200 {array} serializer.ComplexClassJSON "Список классов сложности"
+// @Param page query int false "Номер страницы (по умолчанию 1)"
+// @Param limit query int false "Количество записей на странице (по умолчанию 7, максимум 100)"
+// @Success 200 {object} serializer.ComplexClassListResponse "Список классов сложности с пагинацией"
 // @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
 // @Router /complexclass [get]
 func (h *Handler) GetComplexClasses(ctx *gin.Context) {
-	var compclasses []ds.ComplexClass
-	var err error
-
 	searchQuery := ctx.Query("search-degree")
-	if searchQuery == "" {
-		compclasses, err = h.Repository.GetComplexClasses()
-		if err != nil {
-			h.errorHandler(ctx, http.StatusInternalServerError, err)
-			return
+
+	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "7"))
+	if err != nil || limit < 1 {
+		limit = 7
+	}
+
+	// Ограничиваем максимальный лимит
+	if limit > 100 {
+		limit = 100
+	}
+
+	// Получаем данные с пагинацией
+	compclasses, total, err := h.Repository.GetComplexClasses(searchQuery, page, limit)
+	if err != nil {
+		h.errorHandler(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	// Конвертируем в JSON
+	items := make([]serializer.ComplexClassJSON, 0, len(compclasses))
+	for _, r := range compclasses {
+		items = append(items, serializer.CompClassToJSON(r))
+	}
+
+	var totalPages int
+	if total > 0 {
+		totalPages = int(total) / limit
+		if int(total)%limit > 0 {
+			totalPages++
 		}
 	} else {
-		compclasses, err = h.Repository.GetCompClassByDegree(searchQuery)
+		totalPages = 0
+	}
+
+	if page > totalPages && totalPages > 0 {
+		page = 1
+		compclasses, total, err = h.Repository.GetComplexClasses(searchQuery, page, limit)
 		if err != nil {
 			h.errorHandler(ctx, http.StatusInternalServerError, err)
 			return
 		}
+
+		items = make([]serializer.ComplexClassJSON, 0, len(compclasses))
+		for _, r := range compclasses {
+			items = append(items, serializer.CompClassToJSON(r))
+		}
 	}
-	resp := make([]serializer.ComplexClassJSON, 0, len(compclasses))
-	for _, r := range compclasses {
-		resp = append(resp, serializer.CompClassToJSON(r))
+
+	response := serializer.ComplexClassListResponse{
+		Items:      items,
+		Total:      total,
+		Page:       page,
+		Limit:      limit,
+		TotalPages: totalPages,
 	}
-	ctx.JSON(http.StatusOK, resp)
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 // GetComplexClass godoc

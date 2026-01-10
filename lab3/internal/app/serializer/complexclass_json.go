@@ -2,6 +2,14 @@ package serializer
 
 import "lab3/internal/app/ds"
 
+type ComplexClassListResponse struct {
+	Items      []ComplexClassJSON `json:"items"`
+	Total      int64              `json:"total"`
+	Page       int                `json:"page"`
+	Limit      int                `json:"limit"`
+	TotalPages int                `json:"total_pages"`
+}
+
 type ComplexClassJSON struct {
 	ID          uint    `json:"compclass_id"`
 	IMG         string  `json:"img"`
